@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <title>Monty Hall Simulator</title>
+        <script>
+            function getUrlParams() {
+                const params = new URLSearchParams(window.location.search);
+                let args = {};
+                for (const [key, value] of params.entries()) {
+                    args[key] = value;
+                }
+                return args;
+            }
+            function door(i) {
+                let door = document.createElement("div");
+                door.classList.add("door");
+                door.innerHTML = `
+                    <h3>${i+1}</h3>
+                    <button onclick="action(event.target.parentNode)">Open</button>
+                `;
+                door.setAttribute("id",`door_${i}`)
+                return door;
+            }
+            function adddoors() {
+                let k = document.getElementById("doors")
+                for (let i = 0; i < doorcount; i++) {
+                    k.appendChild(door(i));
+                }
+            }
+            let args = getUrlParams();
+            let doorcount = args["doors"] || 3;
+            let windoor = Math.floor(Math.random() * doorcount);
+            phase = 0
+            leftoverdoor = 0
+            selecteddoor = 0
+            function action(door) {
+                selecteddoor = parseInt(door.id.replace("door_",""))
+                if (phase == 0) {
+                    let deletedoors = []  
+                    let doors = document.getElementsByClassName("door");
+                    let random = Math.floor(Math.random() * doorcount);
+                    while (random == selecteddoor) {
+                        random = Math.floor(Math.random() * doorcount);
+                    }
+                    for (let i = 0; i < doorcount; i++) {
+                        if (i != selecteddoor) {
+                            if (selecteddoor == windoor) {
+                                leftoverdoor = random
+                                if (i != random) {
+                                    deletedoors.push(i)
+                                }
+                            } else {
+                                leftoverdoor = windoor
+                                if (i != windoor) {
+                                    deletedoors.push(i)
+                                }
+                            }
+                        }
+                    }
+                    for (let i = 0; i < deletedoors.length; i++) {
+                        document.getElementById(`door_${deletedoors[i]}`).remove()
+                    }
+                    phase = 1
+                } else {
+                    if (selecteddoor == windoor) alert("You won a car!!!"); else alert("You lost :(");
+                }
+            }
+            function explainchances() {
+                if (phase==0) {
+                    alert(`Well, currently we have ${doorcount} doors, and you havent guessed any\nthe only thing we know is that 1 one of them gives a car and ${doorcount-1} of them give goats\nso the chance of you getting a car is ${100/doorcount}% and the chance of you getting a goat is ${100-100/doorcount}%\nmaybe guess one of the doors first, then press this button again, currently the chance of each door is the same`)
+                } else {
+                    alert(`Well I see, we now have two doors, door ${selecteddoor+1} and door ${leftoverdoor+1}\nok now things are different, due to Monty not touching your door when openning other doors, the chances for your door remains the same, car chance: ${100/doorcount}%, goat chance: ${100-100/doorcount}%.\n but the chances for the other door is different, win chance: ${100-100/(doorcount)}%, goat chance: ${100/(doorcount)}%\ndont believe me? try it yourself`)
+                }
+            }
+        </script>
+        <style>
+            body {
+                background-color: black;
+                color: white;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .doors {
+                width: 100%;
+            }
+            .door {
+                color: white;
+                background-color: rgb(125, 82, 0);
+                width: 55px;
+                border: 1px solid black;
+                padding: 10px;
+                margin: 10px;
+                display: inline-flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .buttony {
+                background-color: gray;
+                padding: 5px;
+                font-size: 20px;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            .buttony:hover {
+                background-color: lightgray;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 style="text-align: center;">Monty Hall Simulator</h1>
+        <div class="doors" id="doors"></div>
+        <button class="buttony" onclick="alert(`bzzzzzzz- Car behind door ${windoor+1} -bzzzzzz`)">Use XRay eyes and see the answer</button>
+        <button class="buttony" onclick="explainchances()">Explain the chances in this case!!</button>
+        <button class="buttony" onclick="alert(`if you dont trust me, ask your friend to check the answer using XRay eyes button and write it somewhere\nthen play the game, if you lost, ask your friend which door was the winning door\nthe whole point of that button is exactly that!\nalso have little faith in me :)\nalso dont judge the chances if you SOMEHOW won two times in a row with the same door, you are just lucky\nGood luck buddy!`)">Bro I aint dum, this is all fake! I know it dude! you just change the answer!</button>
+        <button class="buttony" onclick="alert(`are you here to comment on beauty or learn? be clear with yourself\nand also, I am a lazy person :)`)">Dud, add some design bro, spend time and code!</button>
+        <button class="buttony" onclick="let a = prompt(`how much? (give a positive integer, not gibberish, please :> )`); window.location.href = `https://mathematicise.github.io/Math/Games/MontyHall?doors=${a}`">Just 3 doors? lame! ADD MORE!</button>
+        <script>
+            adddoors();
+        </script>
+    </body>
+</html>
